@@ -1,5 +1,6 @@
 package com.sid.gl.manageemployee.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sid.gl.manageemployee.enums.EmployeeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class EmployeeResponse {
     private Long departmentId;
     private EmployeeType employeeType;
 
+    @JsonIgnore
     public String getEmployeeTypeString(){
         return getEmployeeType().name();
     }

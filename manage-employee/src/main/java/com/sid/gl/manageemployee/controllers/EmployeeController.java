@@ -32,4 +32,9 @@ public class EmployeeController {
     public ResponseEntity<?> getEmployee(@PathVariable("id")Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(iEmployee.getEmployee(id));
     }
+
+    @GetMapping("employee-by-type/{employeeType}")
+    public ResponseEntity<?> listEmployeeByType(@PathVariable String employeeType){
+        return ResponseEntity.ok(iEmployee.listEmployeeByType(employeeType));
+    }
 }

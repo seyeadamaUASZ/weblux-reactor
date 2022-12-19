@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,6 +62,16 @@ public class EmployeeImpl implements IEmployee {
                         .filter(employeeResponse -> employeeResponse.getEmployeeType()!=null)
                         .collect(Collectors.groupingBy(EmployeeResponse::getEmployeeTypeString));
         return listMap;
+
+    }
+
+    @Override
+    public List<EmployeeResponse> listEmployeeByType(String employeeType) {
+        return employeeRepository.findAll()
+                .stream()
+                .map(employeeMapper::convertEmployeeResponse)
+                .filter(employeeResponse -> employeeResponse.getEmployeeType().name().equals(employeeType))
+                .collect(Collectors.toList());
 
     }
 

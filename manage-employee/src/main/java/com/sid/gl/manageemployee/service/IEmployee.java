@@ -13,6 +13,9 @@ public interface IEmployee {
     List<EmployeeResponse> listEmployee();
     EmployeeResponse getEmployee(Long id) throws ResourceNotFoundException;
 
-    public Map<String,List<EmployeeResponse> > listEmployeeByType();
+    Map<String,List<EmployeeResponse>> listEmployeeByType();
+
+    List<EmployeeResponse> listEmployeeByType(String employeeType);
+
 
 }
