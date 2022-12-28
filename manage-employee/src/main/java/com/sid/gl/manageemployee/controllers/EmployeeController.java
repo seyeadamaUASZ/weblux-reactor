@@ -3,8 +3,12 @@ package com.sid.gl.manageemployee.controllers;
 import com.sid.gl.manageemployee.dto.EmployeeRequest;
 import com.sid.gl.manageemployee.exceptions.ResourceNotFoundException;
 import com.sid.gl.manageemployee.service.IEmployee;
+import com.sid.gl.manageemployee.tools.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,26 +19,39 @@ import javax.validation.Valid;
 public class EmployeeController {
     private final IEmployee iEmployee;
 
+    private final BCryptPasswordEncoder encoder;
+
     @GetMapping
     public ResponseEntity<?> listEmployee(){
      return ResponseEntity.ok(iEmployee.listEmployee());
     }
 
     @PostMapping
+    @PreAuthorize("hasPermission('ADMIN_ACTION')")
     public ResponseEntity<?> saveEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) throws ResourceNotFoundException {
-        return ResponseEntity.ok(iEmployee.saveEmployee(employeeRequest));
+        BasicResponse basicResponse = new BasicResponse(200);
+        String passwordHash = encoder.encode(employeeRequest.getPassword());
+        employeeRequest.setPassword(passwordHash);
+        basicResponse.setData(iEmployee.saveEmployee(employeeRequest));
+        return ResponseEntity.ok(basicResponse);
     }
     @GetMapping("/by-employee-type")
     public ResponseEntity<?> listEmployeeByType(){
-        return ResponseEntity.ok(iEmployee.listEmployeeByType());
+        BasicResponse response = new BasicResponse(200);
+        response.setData(iEmployee.listEmployeeByType());
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getEmployee(@PathVariable("id")Long id) throws ResourceNotFoundException {
-        return ResponseEntity.ok(iEmployee.getEmployee(id));
+        BasicResponse response = new BasicResponse(200);
+        response.setData(iEmployee.getEmployee(id));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("employee-by-type/{employeeType}")
     public ResponseEntity<?> listEmployeeByType(@PathVariable String employeeType){
-        return ResponseEntity.ok(iEmployee.listEmployeeByType(employeeType));
+        BasicResponse response = new BasicResponse(200);
+        response.setData(iEmployee.listEmployeeByType(employeeType));
+        return ResponseEntity.ok(response);
     }
 }

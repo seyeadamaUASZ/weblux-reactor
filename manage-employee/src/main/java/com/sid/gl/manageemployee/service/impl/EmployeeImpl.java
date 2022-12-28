@@ -1,45 +1,60 @@
 package com.sid.gl.manageemployee.service.impl;
 
-import com.sid.gl.manageemployee.dto.ApiResponse;
-import com.sid.gl.manageemployee.dto.Department;
 import com.sid.gl.manageemployee.dto.EmployeeRequest;
 import com.sid.gl.manageemployee.dto.EmployeeResponse;
 import com.sid.gl.manageemployee.exceptions.ResourceNotFoundException;
 import com.sid.gl.manageemployee.mappers.EmployeeMapper;
 import com.sid.gl.manageemployee.models.Employee;
+import com.sid.gl.manageemployee.models.Role;
+import com.sid.gl.manageemployee.models.UserRoles;
 import com.sid.gl.manageemployee.repository.EmployeeRepository;
+import com.sid.gl.manageemployee.repository.UserRolesRepository;
+import com.sid.gl.manageemployee.security.UserPrincipal;
 import com.sid.gl.manageemployee.service.IEmployee;
+import com.sid.gl.manageemployee.tools.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EmployeeImpl implements IEmployee {
+public class EmployeeImpl implements IEmployee, UserDetailsService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
     private final WebClientService webClientService;
 
+    private final UserRolesRepository userRolesRepository;
+
+
+
     @Override
     public Employee saveEmployee(EmployeeRequest employeeRequest) throws ResourceNotFoundException {
         //for to save employee
-        ApiResponse response =
-                (ApiResponse) this.webClientService.findDepById(employeeRequest.getDepartmentId()).block();
+        log.info("adding employee body {}",employeeRequest);
+        BasicResponse response =
+                (BasicResponse) this.webClientService.findDepById(employeeRequest.getDepartmentId()).block();
 
-        System.out.println(" api response "+response);
-        if(Objects.isNull(response.getData()))
+        if(Objects.isNull(response.getData())){
+            log.error("Department with id {} not found ",employeeRequest.getDepartmentId());
             throw new ResourceNotFoundException("Department not found with id : "+employeeRequest.getDepartmentId());
+        }
+
         return employeeRepository.save(employeeMapper.convertToEmployee(employeeRequest));
     }
-
+    @Cacheable(value = "employee")
     @Override
     public List<EmployeeResponse> listEmployee() {
+        log.info("list of employee....");
         return employeeRepository.findAll()
                 .stream()
                 .map(employeeMapper::convertEmployeeResponse)
@@ -54,14 +69,13 @@ public class EmployeeImpl implements IEmployee {
         return employeeMapper.convertEmployeeResponse(employee);
     }
 
+    @Cacheable(value = "employee")
     @Override
     public Map<String, List<EmployeeResponse>> listEmployeeByType() {
-        Map<String,List<EmployeeResponse>> listMap=
-                employeeRepository.findAll().stream()
-                        .map(employeeMapper::convertEmployeeResponse)
-                        .filter(employeeResponse -> employeeResponse.getEmployeeType()!=null)
-                        .collect(Collectors.groupingBy(EmployeeResponse::getEmployeeTypeString));
-        return listMap;
+        return employeeRepository.findAll().stream()
+                .map(employeeMapper::convertEmployeeResponse)
+                .filter(employeeResponse -> employeeResponse.getEmployeeType()!=null)
+                .collect(Collectors.groupingBy(EmployeeResponse::getEmployeeTypeString));
 
     }
 
@@ -75,5 +89,42 @@ public class EmployeeImpl implements IEmployee {
 
     }
 
+    @Override
+    @SneakyThrows
+    public UserDetails loadUserByUsername(String username) {
+        Optional<Employee> optionalEmployee=
+                employeeRepository.findByUsername(username);
+        if(optionalEmployee.isEmpty())
+            throw new ResourceNotFoundException("Employee auth not found... ");
+        Employee employee = optionalEmployee.get();
+        employee.setRoles(getUserRoles(employee.getId()));
+
+        return UserPrincipal.createUserPrincipal(employee);
+    }
+
+    @Override
+    public Set<GrantedAuthority> getAllPermissionsAsGrantedAuthorities(Long userId) {
+        Set<Role> roles = getUserRoles(userId);
+        Set<GrantedAuthority> permissions = roles.stream().filter(Objects::nonNull)
+                .map(Role::getPermissions).flatMap(Collection::stream)
+                .map(permission -> new SimpleGrantedAuthority(permission.getLabel()))
+                .collect(Collectors.toSet());
+        return permissions;
+    }
+
+
+    @SneakyThrows
+    private Set<Role> getUserRoles(Long userId)  {
+        Set<Role> roles;
+        List<UserRoles> userRoles=
+                userRolesRepository.findByEmployee_Id(userId);
+        if(userRoles.isEmpty())
+            throw new ResourceNotFoundException("no role affected to user");
+
+        roles= userRoles.stream()
+                .map(UserRoles::getRole)
+                .collect(Collectors.toSet());
+        return roles;
+    }
 
 }

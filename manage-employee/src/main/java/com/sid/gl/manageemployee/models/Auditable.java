@@ -41,5 +41,5 @@ public abstract class Auditable<T> {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
     @Column(nullable = false, updatable = false, unique = true)
-    private Long id;
+    protected Long id;
 }

@@ -1,7 +1,8 @@
 package com.sid.gl.manageemployee.service.impl;
 
-import com.sid.gl.manageemployee.dto.ApiResponse;
+
 import com.sid.gl.manageemployee.exceptions.ResourceNotFoundException;
+import com.sid.gl.manageemployee.tools.response.BasicResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,11 +24,11 @@ public class WebClientService {
                         .baseUrl("http://localhost:9090/api").build();
     }
 
-    public Flux<ApiResponse> findDepartments(){
+    public Flux<BasicResponse> findDepartments(){
         return this.webClient.get()
                 .uri("/department")
                 .retrieve()
-                .bodyToFlux(ApiResponse.class);
+                .bodyToFlux(BasicResponse.class);
     }
 
     public Mono<?> findDepById(Long id){
@@ -41,10 +42,10 @@ public class WebClientService {
                     } else {
                         log.error("Response from service is 5xx");
                     }
-                    return response.bodyToMono(ApiResponse.class)
+                    return response.bodyToMono(BasicResponse.class)
                             .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody.getMessage())));
                 })
-                .bodyToMono(ApiResponse.class);
+                .bodyToMono(BasicResponse.class);
     }
 
 }

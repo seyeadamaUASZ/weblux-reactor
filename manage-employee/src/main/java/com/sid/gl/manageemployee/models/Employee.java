@@ -1,14 +1,14 @@
 package com.sid.gl.manageemployee.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sid.gl.manageemployee.enums.EmployeeType;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -30,5 +30,11 @@ public class Employee extends Auditable<String> {
     private Long departmentId;
     @Enumerated(EnumType.STRING)
     private EmployeeType employeeType;
+    private Date dateSignContract;
+
+    private boolean enabled = true;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Set<Role> roles = new HashSet<>();
 
 }

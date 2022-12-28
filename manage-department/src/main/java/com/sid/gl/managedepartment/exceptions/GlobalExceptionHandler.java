@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @ResponseBody
 @Slf4j
 public class GlobalExceptionHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     //exception par défaut
     @ExceptionHandler(Exception.class)
@@ -56,8 +55,4 @@ public class GlobalExceptionHandler {
 
     }
 
-    /*@ExceptionHandler(AmazonS3Exception.class)
-    public ResponseEntity<BasicResponse> handleAmazonS3Exception(AmazonS3Exception ex) {
-        return ResponseEntity.badRequest().body(new BasicResponse(KYCMessage.WS_AMAZON_ERROR, ex.getMessage()));
-    }*/
 }
