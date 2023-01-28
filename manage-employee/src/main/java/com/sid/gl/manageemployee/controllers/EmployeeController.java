@@ -1,11 +1,11 @@
 package com.sid.gl.manageemployee.controllers;
 
 import com.sid.gl.manageemployee.dto.EmployeeRequest;
+import com.sid.gl.manageemployee.dto.FilterDTO;
 import com.sid.gl.manageemployee.exceptions.ResourceNotFoundException;
 import com.sid.gl.manageemployee.service.IEmployee;
 import com.sid.gl.manageemployee.tools.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -52,6 +52,13 @@ public class EmployeeController {
     public ResponseEntity<?> listEmployeeByType(@PathVariable String employeeType){
         BasicResponse response = new BasicResponse(200);
         response.setData(iEmployee.listEmployeeByType(employeeType));
+        return ResponseEntity.ok(response);
+    }
+    //url link search?
+    @GetMapping("/search")
+    public ResponseEntity<?> searchByCriteria(@Valid FilterDTO filterDTO){
+        BasicResponse response = new BasicResponse(200);
+        response.setData(iEmployee.searchEmployeeByCriteria(filterDTO));
         return ResponseEntity.ok(response);
     }
 }

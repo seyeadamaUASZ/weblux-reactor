@@ -2,6 +2,7 @@ package com.sid.gl.manageemployee.service;
 
 import com.sid.gl.manageemployee.dto.EmployeeRequest;
 import com.sid.gl.manageemployee.dto.EmployeeResponse;
+import com.sid.gl.manageemployee.dto.FilterDTO;
 import com.sid.gl.manageemployee.exceptions.ResourceNotFoundException;
 import com.sid.gl.manageemployee.models.Employee;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,5 +25,6 @@ public interface IEmployee {
 
      Set<GrantedAuthority> getAllPermissionsAsGrantedAuthorities(Long userId);
 
+     List<EmployeeResponse> searchEmployeeByCriteria(FilterDTO filterDTO);
 
 }
