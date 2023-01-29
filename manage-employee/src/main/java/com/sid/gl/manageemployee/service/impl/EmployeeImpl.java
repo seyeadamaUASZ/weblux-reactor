@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,9 @@ public class EmployeeImpl implements IEmployee, UserDetailsService {
     private final WebClientService webClientService;
 
     private final UserRolesRepository userRolesRepository;
+
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 
 
     @Override
@@ -120,6 +124,7 @@ public class EmployeeImpl implements IEmployee, UserDetailsService {
     }
 
     @Override
+    @SneakyThrows
     public List<EmployeeResponse> searchEmployeeByCriteria(FilterDTO filterDTO) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> map = mapper.convertValue(filterDTO, Map.class);
@@ -129,20 +134,20 @@ public class EmployeeImpl implements IEmployee, UserDetailsService {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             SearchCriteria searchCriteria = null;
             if (entry.getValue() != null && entry.getValue() != "") {
-                SearchCriteria criteria = null;
                 switch (entry.getKey()) {
-                    case "type":
-                        searchCriteria = new SearchCriteria("employeeType", entry.getValue().toString(), SearchOperation.EQUAL);
+                    case "employeeType":
+                        searchCriteria = new SearchCriteria("employeeType",EmployeeType.valueOf(entry.getValue().toString()), SearchOperation.EQUAL);
                         break;
-                    case "date":
-                        searchCriteria = new SearchCriteria("dateSignContract", entry.getValue().toString(), SearchOperation.EQUAL);
+                    case "dateSignContract":
+                        Date date = dateFormat.parse(entry.getValue().toString());
+                        searchCriteria = new SearchCriteria("dateSignContract", date, SearchOperation.EQUAL);
                         break;
 
-                    case "nom":
+                    case "lastName":
                         searchCriteria = new SearchCriteria("lastName", entry.getValue().toString(), SearchOperation.EQUAL);
                         break;
 
-                    case "prenom":
+                    case "firstName":
                         searchCriteria = new SearchCriteria("firstName", entry.getValue().toString(), SearchOperation.EQUAL);
                         break;
                     default:
