@@ -22,8 +22,11 @@ public class EmployeeController {
     private final BCryptPasswordEncoder encoder;
 
     @GetMapping
-    public ResponseEntity<?> listEmployee(){
-     return ResponseEntity.ok(iEmployee.listEmployee());
+    public ResponseEntity<BasicResponse> listEmployee(){
+        BasicResponse basicResponse = new BasicResponse();
+        basicResponse.setData(iEmployee.listEmployee());
+        basicResponse.setStatus(200);
+     return ResponseEntity.ok(basicResponse);
     }
 
     @PostMapping
