@@ -30,7 +30,8 @@ public class Employee extends Auditable<String> {
     private Long departmentId;
     @Enumerated(EnumType.STRING)
     private EmployeeType employeeType;
-    private Date dateSignContract;
+    private Date dateSignContract=new Date();
+
 
     private boolean enabled = true;
     @OneToMany(fetch = FetchType.LAZY)

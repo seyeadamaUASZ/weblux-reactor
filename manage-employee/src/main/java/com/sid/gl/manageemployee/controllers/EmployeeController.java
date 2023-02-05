@@ -4,8 +4,10 @@ import com.sid.gl.manageemployee.dto.EmployeeRequest;
 import com.sid.gl.manageemployee.dto.FilterDTO;
 import com.sid.gl.manageemployee.exceptions.ResourceNotFoundException;
 import com.sid.gl.manageemployee.service.IEmployee;
+import com.sid.gl.manageemployee.tools.PasswordTool;
 import com.sid.gl.manageemployee.tools.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,10 +32,12 @@ public class EmployeeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasPermission('ADMIN_ACTION')")
+    @PreAuthorize("hasPermission('ADMIN')")
     public ResponseEntity<?> saveEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) throws ResourceNotFoundException {
         BasicResponse basicResponse = new BasicResponse(200);
-        String passwordHash = encoder.encode(employeeRequest.getPassword());
+        String password = PasswordTool.generateCommonLangPassword();
+        System.out.println("password "+password);
+        String passwordHash = encoder.encode(password);
         employeeRequest.setPassword(passwordHash);
         basicResponse.setData(iEmployee.saveEmployee(employeeRequest));
         return ResponseEntity.ok(basicResponse);
@@ -62,6 +66,20 @@ public class EmployeeController {
     public ResponseEntity<?> searchByCriteria(@Valid FilterDTO filterDTO){
         BasicResponse response = new BasicResponse(200);
         response.setData(iEmployee.searchEmployeeByCriteria(filterDTO));
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/find/{username}")
+    public ResponseEntity<BasicResponse> findEmployee(@PathVariable String username){
+        BasicResponse response = new BasicResponse(200);
+        response.setData(iEmployee.findEmployeeByUsername(username));
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<BasicResponse> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeRequest employeeRequest){
+        BasicResponse response = new BasicResponse(200);
+        response.setData(iEmployee.updateEmployee(id,employeeRequest));
         return ResponseEntity.ok(response);
     }
 }

@@ -27,4 +27,8 @@ public interface IEmployee {
 
      List<EmployeeResponse> searchEmployeeByCriteria(FilterDTO filterDTO);
 
+     EmployeeResponse findEmployeeByUsername(String username);
+
+     Employee updateEmployee(Long id,EmployeeRequest employeeRequest);
+
 }

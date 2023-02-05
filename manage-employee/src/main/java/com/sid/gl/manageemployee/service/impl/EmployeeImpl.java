@@ -17,6 +17,7 @@ import com.sid.gl.manageemployee.repository.EmployeeRepository;
 import com.sid.gl.manageemployee.repository.UserRolesRepository;
 import com.sid.gl.manageemployee.security.UserPrincipal;
 import com.sid.gl.manageemployee.service.IEmployee;
+import com.sid.gl.manageemployee.tools.PasswordTool;
 import com.sid.gl.manageemployee.tools.response.BasicResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,6 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -161,6 +163,29 @@ public class EmployeeImpl implements IEmployee, UserDetailsService {
                 .stream()
                 .map(employeeMapper::convertEmployeeResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @SneakyThrows
+    public EmployeeResponse findEmployeeByUsername(String username) {
+        Optional<Employee> optionalEmployee = this.employeeRepository.findByUsername(username);
+        if(optionalEmployee.isEmpty())
+            throw new ResourceNotFoundException("Employee with User not found");
+        Employee employee = optionalEmployee.get();
+        EmployeeResponse employeeResponse = employeeMapper.convertEmployeeResponse(employee);
+        return employeeResponse;
+    }
+
+    @Override
+    public Employee updateEmployee(Long id, EmployeeRequest employeeRequest) {
+        Optional<Employee> optionalEmployee =
+                this.employeeRepository.findById(id);
+        if(optionalEmployee.isEmpty())
+            throw new RuntimeException("Employee not found with id");
+        Employee employee = this.employeeMapper.convertToEmployee(employeeRequest);
+        employee.setId(id);
+
+        return employeeRepository.save(employee);
     }
 
 

@@ -15,6 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class EmployeeResponse {
+    private Long id;
     private String lastName;
     private String firstName;
     private String username;

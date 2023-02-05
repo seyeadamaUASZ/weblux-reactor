@@ -13,11 +13,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 public class ManageEmployeeApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ManageEmployeeApplication.class, args);
 	}
-
 	@Bean
 	public AuditorAware<String> auditorAware() {
 		return new SpringSecurityAuditorAware();

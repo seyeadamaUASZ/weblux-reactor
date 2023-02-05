@@ -12,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmployeeRequest {
+    private Long id;
     private String lastName;
     private String firstName;
     @UniqueEmail

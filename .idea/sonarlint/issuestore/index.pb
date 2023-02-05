@@ -65,8 +65,6 @@ Tmanage-employee/src/main/java/com/sid/gl/manageemployee/constraints/UniqueEmail
 Nmanage-employee/src/main/java/com/sid/gl/manageemployee/models/Permission.java,8\5\8543f0165e4bc765ab010592ea80e2c1a816439d
 x
 Hmanage-employee/src/main/java/com/sid/gl/manageemployee/models/Role.java,e\c\ecdc7070df2993a441897979c0cc89b3541024c5
-}
-Mmanage-employee/src/main/java/com/sid/gl/manageemployee/models/Auditable.java,2\7\27e3d47d7d72bf1ddc18f3661189b4517738a78d
 ƒ
 Smanage-employee/src/main/java/com/sid/gl/manageemployee/security/UserPrincipal.java,f\b\fbf38e5ef0a7c5958abe2c59dbc9c61dd68bbcc3
 ‚
@@ -75,7 +73,5 @@ Rmanage-employee/src/main/java/com/sid/gl/manageemployee/service/impl/RoleImpl.j
 Vmanage-employee/src/main/java/com/sid/gl/manageemployee/service/impl/UserRoleImpl.java,3\c\3ca0060bed2e765490c8d48292b583a447bc9d9b
 
 Omanage-employee/src/main/java/com/sid/gl/manageemployee/tools/JwtTokenUtil.java,3\1\313dbf782b65cdbbe87931dffd8c72234924c5d0
-
-Omanage-employee/src/main/java/com/sid/gl/manageemployee/tools/PasswordTool.java,5\0\507b101200e503f3c9df2e9d6cd76397cc8fbe5a
 ‚
 Rmanage-employee/src/main/java/com/sid/gl/manageemployee/tools/ValidationError.java,d\f\df422ab442c00a3049a9baed06cef8df5597b886
