@@ -77,7 +77,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BasicResponse> updateEmployee(@PathVariable Long id,@Valid @RequestBody EmployeeRequest employeeRequest){
+    public ResponseEntity<BasicResponse> updateEmployee(@PathVariable Long id,@RequestBody EmployeeRequest employeeRequest){
         BasicResponse response = new BasicResponse(200);
         response.setData(iEmployee.updateEmployee(id,employeeRequest));
         return ResponseEntity.ok(response);

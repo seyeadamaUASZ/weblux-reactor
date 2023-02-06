@@ -182,9 +182,14 @@ public class EmployeeImpl implements IEmployee, UserDetailsService {
                 this.employeeRepository.findById(id);
         if(optionalEmployee.isEmpty())
             throw new RuntimeException("Employee not found with id");
+        Employee employeeChecked = optionalEmployee.get();
+
         Employee employee = this.employeeMapper.convertToEmployee(employeeRequest);
         employee.setId(id);
+        //set password for to avoid null password
+        employee.setPassword(employeeChecked.getPassword());
 
+        log.info("employee updated ");
         return employeeRepository.save(employee);
     }
 
